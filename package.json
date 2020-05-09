@@ -1,0 +1,25 @@
+{
+  "name": "files-import",
+  "version": "1.0.0",
+  "description": "Traverse all files in the import folder",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/uccu/files-import.git"
+  },
+  "keywords": [
+    "files",
+    "import",
+    "folder",
+    "traverse"
+  ],
+  "author": "cat@4moe.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uccu/files-import/issues"
+  },
+  "homepage": "https://github.com/uccu/files-import#readme"
+}
