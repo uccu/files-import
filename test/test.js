@@ -1,10 +1,10 @@
 'use strict';
 
-const path = require('path')
-const Fac = require('..')
-const fac = new Fac(path.join(__dirname, '..'));
-
-fac.map(function(file) {
-    if (['.git', '.vscode'].indexOf(file.paths[0]) !== -1) return;
-    console.log(path.join(file.paths.join('/'), path.basename(file.path)));
-})
+const path = require('path');
+const Factory = require('files-import');
+const factory = new Factory('test/testFolder');
+factory.map(file => {
+    console.log(
+        file.paths.join('/') + '|' + path.basename(file.path) 
+    )
+});

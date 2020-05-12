@@ -1,7 +1,7 @@
 {
   "name": "files-import",
-  "version": "1.0.0",
-  "description": "Traverse all files in the import folder",
+  "version": "1.0.1",
+  "description": "Traverse all files in a folder",
   "main": "index.js",
   "scripts": {
     "test": "node test/test.js"

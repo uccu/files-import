@@ -14,12 +14,12 @@ class Factory {
         this.fullPath = path.resolve(this.path);
 
         if (!fs.existsSync(this.fullPath)) {
-            throw new Error('path is not exist');
+            throw new Error('path \'' + this.fullPath + '\' is not exist');
         }
 
         const fileStat = fs.statSync(this.fullPath);
         if (!fileStat.isDirectory()) {
-            throw new Error('path is not a directory');
+            throw new Error('path \'' + this.fullPath + '\' is not a directory');
         }
 
         this.paths = [];
