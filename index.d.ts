@@ -13,7 +13,7 @@ declare module 'files-import' {
     }
 
     export class Factory {
-        constructor(folderPath: string, paths?: string[]): viod
+        constructor(folderPath: string, paths?: string[]): void
         public map(fn: (f: File) => void): void
     }
 
