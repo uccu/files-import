@@ -1,3 +1,8 @@
+
+[![Build Status](https://www.travis-ci.org/uccu/files-import.svg?branch=master)](https://www.travis-ci.org/uccu/files-import)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ee3a1bd63688f36b0074/maintainability)](https://codeclimate.com/github/uccu/files-import/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ee3a1bd63688f36b0074/test_coverage)](https://codeclimate.com/github/uccu/files-import/test_coverage)
+
 ### LICENSE
 MIT
 
