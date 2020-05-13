@@ -21,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/uccu/files-import/issues"
   },
-  "homepage": "https://github.com/uccu/files-import#readme"
+  "homepage": "https://github.com/uccu/files-import#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "eslint": "^7.0.0",
+    "typescript": "^3.9.2"
+  }
 }

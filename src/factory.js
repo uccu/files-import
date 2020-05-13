@@ -22,14 +22,14 @@ class Factory {
             throw new Error('path \'' + this.fullPath + '\' is not a directory');
         }
 
-        this.paths = [];
+        this.folders = [];
         this.files = [];
 
         fs.readdirSync(this.fullPath).forEach(fileName => {
             const filePath = path.join(this.fullPath, fileName);
             const fileStat = fs.statSync(filePath);
             if (fileStat.isDirectory()) {
-                this.paths.push(new Folder(filePath, paths.concat(fileName)));
+                this.folders.push(new Folder(filePath, paths.concat(fileName)));
             } else {
                 this.files.push(new File(filePath, paths));
             }
@@ -38,7 +38,7 @@ class Factory {
 
     map(fn) {
         const list = this.files.map(fn);
-        return list.concat(this.paths.map(p => p.map(fn)));
+        return list.concat(this.folders.map(p => p.map(fn)));
     }
 
 
