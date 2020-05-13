@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const Factory = require('files-import');
+const Factory = require('..');
 const factory = new Factory('test/testFolder');
 factory.map(file => {
     console.log(
