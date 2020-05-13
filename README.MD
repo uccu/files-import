@@ -2,6 +2,8 @@
 [![Build Status](https://www.travis-ci.org/uccu/files-import.svg?branch=master)](https://www.travis-ci.org/uccu/files-import)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ee3a1bd63688f36b0074/maintainability)](https://codeclimate.com/github/uccu/files-import/maintainability)
 [![codecov](https://codecov.io/gh/uccu/files-import/branch/master/graph/badge.svg)](https://codecov.io/gh/uccu/files-import)
+[![GitHub issues](https://img.shields.io/github/issues/uccu/files-import)](https://github.com/uccu/files-import/issues)
+![GitHub](https://img.shields.io/github/license/uccu/files-import)
 
 ### LICENSE
 MIT
