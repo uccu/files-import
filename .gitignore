@@ -4,4 +4,3 @@ yarn.lock
 .DS_Store
 .vscode
 .github/
-test/
