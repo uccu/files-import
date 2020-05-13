@@ -1,5 +1,15 @@
 
 language: node_js
 node_js:
-  - '10'
   - '8'
+before_install:
+  - npm i npminstall -g
+install:
+  - npminstall
+script:
+  - npm run ci
+after_script:
+  - npminstall codecov && codecov
+branches:
+  only:
+    - master
