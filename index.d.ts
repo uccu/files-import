@@ -3,18 +3,21 @@
 declare module 'files-import' {
 
     interface File {
-        public path: string
-        public paths: string[]
+        path: string
+        folders: string[]
     }
 
     interface Folder {
-        public path: string
-        public paths: string[]
+        path: string
+        folders: string[]
     }
 
     export class Factory {
-        constructor(folderPath: string, paths?: string[]): void
+        public files : File[]
+        public folders : Folder[]
+        constructor(folderPath: string, folders?: string[]): void
         public map(fn: (f: File) => void): void
+        public ignore(fn: ((f: File | Folder) => boolean) | string | RegExp): void
     }
 
     export default Factory

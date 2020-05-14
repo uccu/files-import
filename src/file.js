@@ -3,9 +3,9 @@
 
 class File {
 
-    constructor(path, paths) {
+    constructor(path, folders) {
         this.path = path;
-        this.paths = paths;
+        this.folders = folders;
     }
 
 

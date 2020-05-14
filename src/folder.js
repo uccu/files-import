@@ -3,15 +3,9 @@
 
 class Folder {
 
-    constructor(path, paths = []) {
+    constructor(path, folders = []) {
         this.path = path;
-        this.paths = paths;
-        const Fac = require('./factory');
-        this.factory = new Fac(this.path, paths);
-    }
-
-    map(fn) {
-        return this.factory.map(fn);
+        this.folders = folders;
     }
 
 }
