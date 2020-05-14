@@ -1,6 +1,6 @@
 {
   "name": "files-import",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Traverse all files in a folder",
   "main": "index.js",
   "scripts": {
