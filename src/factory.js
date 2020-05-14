@@ -24,7 +24,8 @@ class Factory {
 
         this.folders = [];
         this.files = [];
-        this._ignore = null;
+        this._exclude = null;
+        this._include = null;
 
         fs.readdirSync(this.fullPath).forEach(fileName => {
             const filePath = path.join(this.fullPath, fileName);
@@ -53,17 +54,32 @@ class Factory {
         });
     }
 
+    include(fn) {
+        if (typeof fn === 'string') {
+            fn = path.join(fn);
+            this._include = i => i.path.indexOf(fn) !== -1;
+        } else if (fn instanceof RegExp) {
+            this._include = i => i.path.search(fn) !== -1;
+        } else if (typeof fn === 'function') {
+            this._include = fn;
+        }
+
+        return this;
+    }
+
+    exclude(fn) {
+        return this.ignore(fn);
+    }
+
 
     ignore(fn) {
         if (typeof fn === 'string') {
             fn = path.join(fn);
-            this._ignore = i => i.path.indexOf(fn) !== -1;
-        }
-        if (fn instanceof RegExp) {
-            this._ignore = i => i.path.search(fn) !== -1;
-        }
-        if (typeof fn === 'function') {
-            this._ignore = fn;
+            this._exclude = i => i.path.indexOf(fn) !== -1;
+        } else if (fn instanceof RegExp) {
+            this._exclude = i => i.path.search(fn) !== -1;
+        } else if (typeof fn === 'function') {
+            this._exclude = fn;
         }
 
         return this;
@@ -71,7 +87,8 @@ class Factory {
 
 
     handleFileIgnore(file, fn) {
-        if (this._ignore && this._ignore(file)) return;
+        if (this._exclude && this._exclude(file)) return;
+        if (this._include && !this._include(file)) return;
         fn(file);
     }
 
@@ -81,9 +98,10 @@ class Factory {
      * @return void
      */
     handleFolderIgnore(folder, fn) {
-        if (this._ignore && this._ignore(folder)) return;
+        if (this._exclude && this._exclude(folder)) return;
+        if (this._include && !this._include(folder)) return;
         const fac = new Factory(folder.path, folder.folders);
-        fac.ignore(this._ignore).map(fn);
+        fac.exclude(this._exclude).include(this._include).map(fn);
     }
 }
 

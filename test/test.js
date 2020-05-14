@@ -86,12 +86,12 @@ describe('Factory', function() {
     });
 
 
-    describe('ignore', function() {
+    describe('exclude', function() {
         it('should matched', function() {
             const testFolder = path.join(__dirname, 'testFolder');
             const fac = new Factory(testFolder);
             const data = [];
-            fac.ignore(function(f) {
+            fac.exclude(function(f) {
                 return f.path.match('folder');
             }).map(file => {
                 data.push([...file.folders, path.basename(file.path)]);
@@ -107,7 +107,7 @@ describe('Factory', function() {
             const testFolder = path.join(__dirname, 'testFolder');
             const fac = new Factory(testFolder);
             const data = [];
-            fac.ignore('folder').map(file => {
+            fac.exclude('folder').map(file => {
                 data.push([...file.folders, path.basename(file.path)]);
             });
 
@@ -121,12 +121,60 @@ describe('Factory', function() {
             const testFolder = path.join(__dirname, 'testFolder');
             const fac = new Factory(testFolder);
             const data = [];
-            fac.ignore(/.file/).map(file => {
+            fac.exclude(/.file/).map(file => {
                 data.push([...file.folders, path.basename(file.path)]);
             });
 
             assert.equal(JSON.stringify(data), JSON.stringify([
 
+            ]), 'map data is not matched');
+        });
+
+    });
+
+    describe('include', function() {
+        it('should matched', function() {
+            const testFolder = path.join(__dirname, 'testFolder');
+            const fac = new Factory(testFolder);
+            const data = [];
+            fac.include(function(f) {
+                return f.path.match('folder');
+            }).map(file => {
+                data.push([...file.folders, path.basename(file.path)]);
+            });
+
+            assert.equal(JSON.stringify(data), JSON.stringify([
+                ['Afolder', 'Afile'],
+                ['Afolder', 'Bfile'],
+                ['Bfolder', 'Cfolder', 'Efile']
+            ]), 'map data is not matched');
+        });
+
+        it('should matched', function() {
+            const testFolder = path.join(__dirname, 'testFolder');
+            const fac = new Factory(testFolder);
+            const data = [];
+            fac.include('folder').map(file => {
+                data.push([...file.folders, path.basename(file.path)]);
+            });
+
+            assert.equal(JSON.stringify(data), JSON.stringify([
+                ['Afolder', 'Afile'],
+                ['Afolder', 'Bfile'],
+                ['Bfolder', 'Cfolder', 'Efile']
+            ]), 'map data is not matched');
+        });
+
+        it('should matched', function() {
+            const testFolder = path.join(__dirname, 'testFolder');
+            const fac = new Factory(testFolder);
+            const data = [];
+            fac.include(/.Dfile/).map(file => {
+                data.push([...file.folders, path.basename(file.path)]);
+            });
+
+            assert.equal(JSON.stringify(data), JSON.stringify([
+                ['Dfile']
             ]), 'map data is not matched');
         });
 

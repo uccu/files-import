@@ -13,11 +13,13 @@ declare module 'files-import' {
     }
 
     export class Factory {
-        public files : File[]
-        public folders : Folder[]
+        public files: File[]
+        public folders: Folder[]
         constructor(folderPath: string, folders?: string[]): void
         public map(fn: (f: File) => void): void
         public ignore(fn: ((f: File | Folder) => boolean) | string | RegExp): void
+        public exclude(fn: ((f: File | Folder) => boolean) | string | RegExp): void
+        public include(fn: ((f: File | Folder) => boolean) | string | RegExp): void
     }
 
     export default Factory
