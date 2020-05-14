@@ -54,16 +54,19 @@ class Factory {
         });
     }
 
-    include(fn) {
+    _cludeAdd(fac, pro, fn) {
         if (typeof fn === 'string') {
             fn = path.join(fn);
-            this._include = i => i.path.indexOf(fn) !== -1;
+            fac[pro] = i => i.path.indexOf(fn) !== -1;
         } else if (fn instanceof RegExp) {
-            this._include = i => i.path.search(fn) !== -1;
+            fac[pro] = i => i.path.search(fn) !== -1;
         } else if (typeof fn === 'function') {
-            this._include = fn;
+            fac[pro] = fn;
         }
+    }
 
+    include(fn) {
+        this._cludeAdd(this, '_include', fn);
         return this;
     }
 
@@ -73,15 +76,7 @@ class Factory {
 
 
     ignore(fn) {
-        if (typeof fn === 'string') {
-            fn = path.join(fn);
-            this._exclude = i => i.path.indexOf(fn) !== -1;
-        } else if (fn instanceof RegExp) {
-            this._exclude = i => i.path.search(fn) !== -1;
-        } else if (typeof fn === 'function') {
-            this._exclude = fn;
-        }
-
+        this._cludeAdd(this, '_exclude', fn);
         return this;
     }
 
