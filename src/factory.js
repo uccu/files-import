@@ -65,13 +65,25 @@ class Factory {
         }
     }
 
-    include(fn) {
-        this._cludeAdd(this, '_include', fn);
-        return this;
+    get include() {
+        return (fn) => {
+            this._cludeAdd(this, '_include', fn);
+            return this;
+        }
     }
 
-    exclude(fn) {
-        return this.ignore(fn);
+    set include(fn) {
+        this._cludeAdd(this, '_include', fn);
+    }
+
+    get exclude() {
+        return (fn) => {
+            return this.ignore(fn);
+        }
+    }
+
+    set exclude(fn) {
+        this.ignore(fn);
     }
 
 

@@ -32,7 +32,7 @@ const Factory = require('files-import');
 const factory = new Factory('myFolder');
 factory.map(file => {
     console.log(
-        file.paths.join('/') + '|' + path.basename(file.path)
+        file.folders.join('/') + '|' + path.basename(file.path)
     )
 });
 
@@ -44,3 +44,65 @@ factory.map(file => {
 ```
 
 
+### INCLUDE
+```javascript
+// fac.include = 'folder';
+// fac.include = /folder/;
+// fac.include('folder');
+// fac.include(/folder/);
+factory.include(function(f) {
+    return f.path.indexOf('folder') !== -1;
+}).map(file => {
+    console.log(
+        file.folders.join('/') + '|' + path.basename(file.path)
+    )
+});
+
+# Afolder|Afile
+# Afolder|Bfile
+# Bfolder/Cfolder|Efile
+```
+
+### EXCLUDE
+```javascript
+// fac.exclude = 'folder';
+// fac.exclude = /folder/;
+// fac.exclude('folder');
+// fac.exclude(/folder/);
+factory.exclude(function(f) {
+    return f.path.indexOf('folder') !== -1;
+}).map(file => {
+    console.log(
+        file.folders.join('/') + '|' + path.basename(file.path)
+    )
+});
+
+# |Cfile
+# |Dfile
+```
+
+### SUGGESTION
+```javascript
+/** wrong */
+factory.map(function() {
+    if(file.folders[0] === 'test') return;
+    // other code
+});
+
+/** ok */
+factory.exclude(f => {
+    return f.folders[0] === 'test';
+}).map(function() {
+    // other code
+});
+
+/** traverse files in folder exclude folder inside */
+factory.exclude(f => {
+    return f.folders[0];
+}).map(function() {
+    // other code
+});
+
+# |Cfile
+# |Dfile
+```
