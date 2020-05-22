@@ -107,7 +107,7 @@ class Factory {
     handleFileIgnore(file, fn) {
 
         const filterList = this._filter.filter(isFilterFile);
-        if (!handleFilter(filterList, file)) return;
+        if (!handleFilterList(filterList, file)) return;
         fn(file);
     }
 
@@ -119,7 +119,7 @@ class Factory {
     handleFolderIgnore(folder, fn) {
 
         const filterList = this._filter.filter(isFilterFolder);
-        if (!handleFilter(filterList, folder)) return;
+        if (!handleFilterList(filterList, folder)) return;
 
         const fac = new Factory(folder.path, folder.folders);
         fac._filter = this._filter;
@@ -146,17 +146,23 @@ function isFilterFolder(f) {
     return !f.t || f.t === Factory.PATH_TYPE.FOLDER;
 }
 
-function handleFilter(filterList, fileOrFolder) {
+function handleFilterList(filterList, fileOrFolder) {
 
     for (const filterObj of filterList) {
+        if (!handleFilterObj(filterObj, fileOrFolder)) return false;
+    }
 
-        if (filterObj.m === FILTER_TYPE.EXCLUDE) {
-            if (filterObj.fn(fileOrFolder)) return false;
-        }
+    return true;
+}
 
-        if (filterObj.m === FILTER_TYPE.INCLUDE) {
-            if (!filterObj.fn(fileOrFolder)) return false;
-        }
+function handleFilterObj(filterObj, fileOrFolder) {
+
+    if (filterObj.m === FILTER_TYPE.EXCLUDE) {
+        if (filterObj.fn(fileOrFolder)) return false;
+    }
+
+    if (filterObj.m === FILTER_TYPE.INCLUDE) {
+        if (!filterObj.fn(fileOrFolder)) return false;
     }
 
     return true;
