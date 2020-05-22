@@ -157,9 +157,22 @@ function handleFilterList(filterList, fileOrFolder) {
 
 function handleFilterObj(filterObj, fileOrFolder) {
 
+    if (!handleFilterObjExclude(filterObj, fileOrFolder)) return false;
+    if (!handleFilterObjInclude(filterObj, fileOrFolder)) return false;
+
+    return true;
+}
+
+function handleFilterObjExclude(filterObj, fileOrFolder) {
+
     if (filterObj.m === FILTER_TYPE.EXCLUDE) {
         if (filterObj.fn(fileOrFolder)) return false;
     }
+
+    return true;
+}
+
+function handleFilterObjInclude(filterObj, fileOrFolder) {
 
     if (filterObj.m === FILTER_TYPE.INCLUDE) {
         if (!filterObj.fn(fileOrFolder)) return false;
