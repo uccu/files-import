@@ -102,17 +102,12 @@ class Factory {
     }
 
 
-    handleFileIgnore(file, fn) {
-        for (let f of this._filter) {
-            if (f.t && f.t !== Factory.PATH_TYPE.FILE) continue;
 
-            if (f.m === FILTER_TYPE.EXCLUDE) {
-                if (f.fn(file)) return;
-            }
-            if (f.m === FILTER_TYPE.INCLUDE) {
-                if (!f.fn(file)) return;
-            }
-        }
+
+    handleFileIgnore(file, fn) {
+
+        const filterList = this._filter.filter(isFilterFile);
+        if (!handleFilter(filterList, file)) return;
         fn(file);
     }
 
@@ -122,16 +117,10 @@ class Factory {
      * @return void
      */
     handleFolderIgnore(folder, fn) {
-        for (let f of this._filter) {
-            if (f.t && f.t !== Factory.PATH_TYPE.FOLDER) continue;
 
-            if (f.m === FILTER_TYPE.EXCLUDE) {
-                if (f.fn(folder)) return;
-            }
-            if (f.m === FILTER_TYPE.INCLUDE) {
-                if (!f.fn(folder)) return;
-            }
-        }
+        const filterList = this._filter.filter(isFilterFolder);
+        if (!handleFilter(filterList, folder)) return;
+
         const fac = new Factory(folder.path, folder.folders);
         fac._filter = this._filter;
         fac.map(fn);
@@ -149,6 +138,28 @@ const FILTER_TYPE = {
     EXCLUDE: 1,
 }
 
+function isFilterFile(f) {
+    return !f.t || f.t === Factory.PATH_TYPE.FILE;
+}
 
+function isFilterFolder(f) {
+    return !f.t || f.t === Factory.PATH_TYPE.FOLDER;
+}
+
+function handleFilter(filterList, fileOrFolder) {
+
+    for (const filterObj of filterList) {
+
+        if (filterObj.m === FILTER_TYPE.EXCLUDE) {
+            if (filterObj.fn(fileOrFolder)) return false;
+        }
+
+        if (filterObj.m === FILTER_TYPE.INCLUDE) {
+            if (!filterObj.fn(fileOrFolder)) return false;
+        }
+    }
+
+    return true;
+}
 
 module.exports = Factory;
