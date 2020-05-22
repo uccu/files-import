@@ -52,7 +52,7 @@ factory
     console.log( path.basename(file.path) );
 });
 
-# Afile
+
 # Bfile
 ```
 
