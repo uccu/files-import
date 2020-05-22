@@ -7,7 +7,6 @@ const Factory = require('../src/factory');
 const File = require('../src/file');
 const Folder = require('../src/folder');
 
-
 describe('Global', function() {
     before(function() {
         fs.mkdirSync(path.join(__dirname, 'testFolder'));
@@ -244,6 +243,7 @@ describe('Global', function() {
                     ['Afolder', 'Bfile'],
                 ]), 'map data is not matched');
             });
+            
         });
     });
 

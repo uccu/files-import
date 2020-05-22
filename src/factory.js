@@ -8,12 +8,6 @@ const File = require('./file');
 
 class Factory {
 
-    static PATH_TYPE = {
-        ALL: 0,
-        FILE: 1,
-        FOLDER: 2
-    }
-
     constructor(folderPath, folders = []) {
 
         this.path = folderPath;
@@ -59,21 +53,23 @@ class Factory {
         });
     }
 
-    _cludeAdd(pro, fn, t) {
+    _cludeAdd(m, fn, t) {
+
+        let filter = null;
+
         if (typeof fn === 'string') {
             fn = path.join(fn);
-            this._filter.push({
-                m: pro, fn: i => i.path.indexOf(fn) !== -1, t
-            });
+            filter = i => i.path.indexOf(fn) !== -1;
+
         } else if (fn instanceof RegExp) {
-            this._filter.push({
-                m: pro, fn: i => i.path.search(fn) !== -1, t
-            });
+            filter = i => i.path.search(fn) !== -1;
+
         } else if (typeof fn === 'function') {
-            this._filter.push({
-                m: pro, fn, t
-            });
+            filter = fn;
+        } else {
+            return;
         }
+        this._filter.push({ m, fn: filter, t });
     }
 
     get include() {
@@ -109,8 +105,13 @@ class Factory {
     handleFileIgnore(file, fn) {
         for (let f of this._filter) {
             if (f.t && f.t !== Factory.PATH_TYPE.FILE) continue;
-            if (f.m === FILTER_TYPE.EXCLUDE && f.fn(file)) return;
-            if (f.m === FILTER_TYPE.INCLUDE && !f.fn(file)) return;
+
+            if (f.m === FILTER_TYPE.EXCLUDE) {
+                if (f.fn(file)) return;
+            }
+            if (f.m === FILTER_TYPE.INCLUDE) {
+                if (!f.fn(file)) return;
+            }
         }
         fn(file);
     }
@@ -123,14 +124,25 @@ class Factory {
     handleFolderIgnore(folder, fn) {
         for (let f of this._filter) {
             if (f.t && f.t !== Factory.PATH_TYPE.FOLDER) continue;
-            if (f.m === FILTER_TYPE.EXCLUDE && f.fn(folder)) return;
-            if (f.m === FILTER_TYPE.INCLUDE && !f.fn(folder)) return;
+
+            if (f.m === FILTER_TYPE.EXCLUDE) {
+                if (f.fn(folder)) return;
+            }
+            if (f.m === FILTER_TYPE.INCLUDE) {
+                if (!f.fn(folder)) return;
+            }
         }
         const fac = new Factory(folder.path, folder.folders);
         fac._filter = this._filter;
         fac.map(fn);
     }
 }
+
+Factory.PATH_TYPE = {
+    ALL: 0,
+    FILE: 1,
+    FOLDER: 2
+};
 
 const FILTER_TYPE = {
     INCLUDE: 0,
