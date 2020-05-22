@@ -8,8 +8,8 @@ const File = require('../src/file');
 const Folder = require('../src/folder');
 
 
-describe('Global', function () {
-    before(function () {
+describe('Global', function() {
+    before(function() {
         fs.mkdirSync(path.join(__dirname, 'testFolder'));
         fs.mkdirSync(path.join(__dirname, 'testFolder', 'Afolder'));
         fs.mkdirSync(path.join(__dirname, 'testFolder', 'Bfolder'));
@@ -21,7 +21,7 @@ describe('Global', function () {
         fs.writeFileSync(path.join(__dirname, 'testFolder', 'Bfolder', 'Cfolder', 'Efile'), '');
     });
 
-    after(function () {
+    after(function() {
         fs.unlinkSync(path.join(__dirname, 'testFolder', 'Afolder', 'Afile'), '');
         fs.unlinkSync(path.join(__dirname, 'testFolder', 'Afolder', 'Bfile'), '');
         fs.unlinkSync(path.join(__dirname, 'testFolder', 'Cfile'), '');
@@ -33,9 +33,9 @@ describe('Global', function () {
         fs.rmdirSync(path.join(__dirname, 'testFolder'));
     });
 
-    describe('Factory', function () {
-        describe('error test', function () {
-            it('should throw an error when inputs a path which is not exist', function () {
+    describe('Factory', function() {
+        describe('error test', function() {
+            it('should throw an error when inputs a path which is not exist', function() {
 
                 const testFolder = path.join(__dirname, 'n-testFolder');
                 try {
@@ -47,7 +47,7 @@ describe('Global', function () {
                 }
             });
 
-            it('should throw an error when inputs a path which is not a folder', function () {
+            it('should throw an error when inputs a path which is not a folder', function() {
 
                 const testFolder = path.join(__dirname, 'testFolder', 'Cfile');
                 try {
@@ -59,7 +59,7 @@ describe('Global', function () {
                 }
             });
 
-            it('should throw an error when the param of method map is not a function', function () {
+            it('should throw an error when the param of method map is not a function', function() {
 
                 const testFolder = path.join(__dirname, 'testFolder', 'Afolder');
                 try {
@@ -73,8 +73,8 @@ describe('Global', function () {
 
         });
 
-        describe('constructor', function () {
-            it('should success when inputs a path which is exist and its a folder', function () {
+        describe('constructor', function() {
+            it('should success when inputs a path which is exist and its a folder', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 assert.equal(fac.files.length, 2, 'files not matched');
@@ -89,8 +89,8 @@ describe('Global', function () {
             });
         });
 
-        describe('function map', function () {
-            it('should matched', function () {
+        describe('function map', function() {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
 
@@ -112,12 +112,12 @@ describe('Global', function () {
         });
 
 
-        describe('exclude', function () {
-            it('should matched', function () {
+        describe('exclude', function() {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 const data = [];
-                fac.exclude(function (f) {
+                fac.exclude(function(f) {
                     return f.path.match('folder');
                 }).map(file => {
                     data.push([...file.folders, path.basename(file.path)]);
@@ -129,7 +129,7 @@ describe('Global', function () {
                 ]), 'map data is not matched');
             });
 
-            it('should matched', function () {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 const data = [];
@@ -143,7 +143,7 @@ describe('Global', function () {
                 ]), 'map data is not matched');
             });
 
-            it('should matched', function () {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 const data = [];
@@ -159,12 +159,12 @@ describe('Global', function () {
 
         });
 
-        describe('include', function () {
-            it('should matched', function () {
+        describe('include', function() {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 const data = [];
-                fac.include(function (f) {
+                fac.include(function(f) {
                     return f.path.match('folder');
                 }).map(file => {
                     data.push([...file.folders, path.basename(file.path)]);
@@ -177,7 +177,7 @@ describe('Global', function () {
                 ]), 'map data is not matched');
             });
 
-            it('should matched', function () {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 const data = [];
@@ -192,7 +192,7 @@ describe('Global', function () {
                 ]), 'map data is not matched');
             });
 
-            it('should matched', function () {
+            it('should matched', function() {
                 const testFolder = path.join(__dirname, 'testFolder');
                 const fac = new Factory(testFolder);
                 const data = [];
@@ -207,13 +207,51 @@ describe('Global', function () {
             });
 
         });
+
+        describe('complex', function() {
+            it('should matched', function() {
+                const testFolder = path.join(__dirname, 'testFolder');
+                const fac = new Factory(testFolder);
+                const data = [];
+
+                fac.exclude = 'Cfolder';
+                fac.exclude(/B(file|folder)/, Factory.PATH_TYPE.FOLDER);
+                fac.include('Afile', Factory.PATH_TYPE.FILE);
+
+                fac.include({}).map(file => {
+                    data.push([...file.folders, path.basename(file.path)]);
+                });
+
+                assert.equal(JSON.stringify(data), JSON.stringify([
+                    ['Afolder', 'Afile'],
+                ]), 'map data is not matched');
+            });
+
+            it('should matched', function() {
+                const testFolder = path.join(__dirname, 'testFolder');
+                const fac = new Factory(testFolder);
+                const data = [];
+
+                fac.ignore('Cfile')
+                    .exclude('Dfile')
+                    .include('A', Factory.PATH_TYPE.FOLDER)
+                    .exclude('Afile', Factory.PATH_TYPE.FILE)
+                    .map(file => {
+                        data.push([...file.folders, path.basename(file.path)]);
+                    });
+
+                assert.equal(JSON.stringify(data), JSON.stringify([
+                    ['Afolder', 'Bfile'],
+                ]), 'map data is not matched');
+            });
+        });
     });
 
 
 
-    describe('Folder', function () {
-        describe('constructor', function () {
-            it('should success', function () {
+    describe('Folder', function() {
+        describe('constructor', function() {
+            it('should success', function() {
                 const testFolder = path.join(__dirname, 'testFolder', 'Bfolder');
                 const folder = new Folder(testFolder, ['Bfolder']);
 
@@ -221,7 +259,7 @@ describe('Global', function () {
                 assert.equal(folder.folders.length, 1, 'folders not exist');
             });
 
-            it('should success', function () {
+            it('should success', function() {
                 const testFolder = path.join(__dirname, 'testFolder', 'Bfolder');
                 const folder = new Folder(testFolder);
 

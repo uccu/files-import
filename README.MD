@@ -41,6 +41,19 @@ factory.map(file => {
 # Afolder|Afile
 # Afolder|Bfile
 # Bfolder/Cfolder|Efile
+
+
+factory
+.exclude('Cfile')
+.exclude('Dfile')
+.include('A', Factory.PATH_TYPE.FOLDER)
+.exclude('Afile', Factory.PATH_TYPE.FILE)
+.map(file => {
+    console.log( path.basename(file.path) );
+});
+
+# Afile
+# Bfile
 ```
 
 

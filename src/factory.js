@@ -8,6 +8,12 @@ const File = require('./file');
 
 class Factory {
 
+    static PATH_TYPE = {
+        ALL: 0,
+        FILE: 1,
+        FOLDER: 2
+    }
+
     constructor(folderPath, folders = []) {
 
         this.path = folderPath;
@@ -24,8 +30,7 @@ class Factory {
 
         this.folders = [];
         this.files = [];
-        this._exclude = null;
-        this._include = null;
+        this._filter = [];
 
         fs.readdirSync(this.fullPath).forEach(fileName => {
             const filePath = path.join(this.fullPath, fileName);
@@ -54,48 +59,59 @@ class Factory {
         });
     }
 
-    _cludeAdd(fac, pro, fn) {
+    _cludeAdd(pro, fn, t) {
         if (typeof fn === 'string') {
             fn = path.join(fn);
-            fac[pro] = i => i.path.indexOf(fn) !== -1;
+            this._filter.push({
+                m: pro, fn: i => i.path.indexOf(fn) !== -1, t
+            });
         } else if (fn instanceof RegExp) {
-            fac[pro] = i => i.path.search(fn) !== -1;
+            this._filter.push({
+                m: pro, fn: i => i.path.search(fn) !== -1, t
+            });
         } else if (typeof fn === 'function') {
-            fac[pro] = fn;
+            this._filter.push({
+                m: pro, fn, t
+            });
         }
     }
 
     get include() {
-        return (fn) => {
-            this._cludeAdd(this, '_include', fn);
+        return (fn, type) => {
+            this._cludeAdd(FILTER_TYPE.INCLUDE, fn, type);
             return this;
         }
     }
 
     set include(fn) {
-        this._cludeAdd(this, '_include', fn);
+        this._cludeAdd(FILTER_TYPE.INCLUDE, fn);
     }
 
     get exclude() {
-        return (fn) => {
-            return this.ignore(fn);
+        return (fn, type) => {
+            this._cludeAdd(FILTER_TYPE.EXCLUDE, fn, type);
+            return this;
         }
     }
 
     set exclude(fn) {
-        this.ignore(fn);
+        this._cludeAdd(FILTER_TYPE.EXCLUDE, fn);
     }
 
 
-    ignore(fn) {
-        this._cludeAdd(this, '_exclude', fn);
+    ignore(fn, type) {
+        console.warn('Factory.ignore is deprecated: Use Factory.exclude() instead. And it will be removed in feature');
+        this._cludeAdd(FILTER_TYPE.EXCLUDE, fn, type);
         return this;
     }
 
 
     handleFileIgnore(file, fn) {
-        if (this._exclude && this._exclude(file)) return;
-        if (this._include && !this._include(file)) return;
+        for (let f of this._filter) {
+            if (f.t && f.t !== Factory.PATH_TYPE.FILE) continue;
+            if (f.m === FILTER_TYPE.EXCLUDE && f.fn(file)) return;
+            if (f.m === FILTER_TYPE.INCLUDE && !f.fn(file)) return;
+        }
         fn(file);
     }
 
@@ -105,14 +121,21 @@ class Factory {
      * @return void
      */
     handleFolderIgnore(folder, fn) {
-        if (this._exclude && this._exclude(folder)) return;
-        if (this._include && !this._include(folder)) return;
+        for (let f of this._filter) {
+            if (f.t && f.t !== Factory.PATH_TYPE.FOLDER) continue;
+            if (f.m === FILTER_TYPE.EXCLUDE && f.fn(folder)) return;
+            if (f.m === FILTER_TYPE.INCLUDE && !f.fn(folder)) return;
+        }
         const fac = new Factory(folder.path, folder.folders);
-        fac.exclude(this._exclude).include(this._include).map(fn);
+        fac._filter = this._filter;
+        fac.map(fn);
     }
 }
 
-
+const FILTER_TYPE = {
+    INCLUDE: 0,
+    EXCLUDE: 1,
+}
 
 
 
